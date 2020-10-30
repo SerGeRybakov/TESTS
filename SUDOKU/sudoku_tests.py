@@ -1,5 +1,3 @@
-from random import randint
-
 import pytest
 
 from SUDOKU import sudoku
@@ -33,24 +31,8 @@ grid_true = [
     (grid_true, True),
     (grid_false, False),
 ])
-def test_check_line(sample, expected):
-    assert expected == sudoku.check_line(sample)
-
-
-# @pytest.mark.parametrize('sample, expected', [
-#     ([i for i in range(1, 10)], True),
-#     ([randint(1, 9) for i in range(1, 10)], False)
-# ])
-# def test_check_column(sample, expected):
-#     assert expected == sudoku.check_column(sample)
-#
-#
-# @pytest.mark.parametrize('line, column, expected', [
-#     ([i for i in range(1, 10)], [i for i in range(1, 10)], True),
-#     ([randint(1, 9) for i in range(1, 10)], [randint(1, 9) for i in range(1, 10)], False)
-# ])
-# def test_check_square(line, column, expected):
-#     assert expected == sudoku.check_square(line, column)
+def test_check_sudoku(sample, expected):
+    assert expected == sudoku.check_sudoku(sample)
 
 
 if __name__ == '__main__':
