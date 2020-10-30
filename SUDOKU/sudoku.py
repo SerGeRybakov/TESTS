@@ -1,12 +1,24 @@
-from random import randint
-
-
 def check_line(line):
     for i in line:
-        if line.count(i) == 1:
-            return True
-        return False
+        if line.count(i) > 1:
+            return False
+    return True
 
 
-print(check_line([randint(1, 9) for i in range(1, 10)]))
-print(check_line([i for i in range(1, 10)]))
+def check_column(column):
+    for i in column:
+        if column.count(i) > 1:
+            return False
+    return True
+
+
+def check_square(line, column):
+
+    for j in line[::3]:
+        if line[::3][0] != column[::3][0]:
+            return False
+        if line[::3].count(line.index(j)) > 1:
+            return False
+        if column[::3].count(column.index(j)) > 1:
+            return False
+    return True
