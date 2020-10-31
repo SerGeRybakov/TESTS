@@ -2,7 +2,31 @@ import pytest
 
 from SUDOKU import sudoku
 
+grid_true = [
+    [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    [4, 5, 6, 7, 8, 9, 1, 2, 3],
+    [7, 8, 9, 1, 2, 3, 4, 5, 6],
+    [2, 3, 4, 5, 6, 7, 8, 9, 1],
+    [5, 6, 7, 8, 9, 1, 2, 3, 4],
+    [8, 9, 1, 2, 3, 4, 5, 6, 7],
+    [9, 1, 2, 3, 4, 5, 6, 7, 8],
+    [3, 4, 5, 6, 7, 8, 9, 1, 2],
+    [6, 7, 8, 9, 1, 2, 3, 4, 5]
+]
+
 grid_false = [
+    [1, 2, 3, 4, 5, 6, 7, 8, 9],
+    [2, 3, 4, 5, 6, 7, 8, 9, 1],
+    [3, 4, 5, 6, 7, 8, 9, 1, 2],
+    [4, 5, 6, 7, 8, 9, 1, 2, 3],
+    [5, 6, 7, 8, 5, 1, 2, 3, 4],
+    [6, 7, 8, 9, 1, 2, 3, 4, 5],
+    [7, 8, 9, 1, 2, 3, 4, 5, 6],
+    [8, 9, 1, 2, 3, 4, 5, 6, 7],
+    [9, 1, 2, 3, 4, 5, 6, 7, 8]
+]
+
+grid_false1 = [
     [1, 2, 3, 4, 5, 6, 7, 8, 9],
     [2, 3, 4, 5, 6, 7, 8, 9, 1],
     [3, 4, 5, 6, 7, 8, 9, 1, 2],
@@ -14,16 +38,16 @@ grid_false = [
     [9, 1, 2, 3, 4, 5, 6, 7, 8]
 ]
 
-grid_true = [
+grid_false2 = [
     [1, 2, 3, 4, 5, 6, 7, 8, 9],
-    [4, 5, 6, 7, 8, 9, 1, 2, 3],
-    [7, 8, 9, 1, 2, 3, 4, 5, 6],
-    [2, 3, 4, 5, 6, 7, 8, 9, 1],
-    [5, 6, 7, 8, 9, 1, 2, 3, 4],
-    [8, 9, 1, 2, 3, 4, 5, 6, 7],
-    [9, 1, 2, 3, 4, 5, 6, 7, 8],
+    [1, 2, 3, 4, 5, 6, 7, 8, 9],
     [3, 4, 5, 6, 7, 8, 9, 1, 2],
-    [6, 7, 8, 9, 1, 2, 3, 4, 5]
+    [4, 5, 6, 7, 8, 9, 1, 2, 3],
+    [5, 6, 7, 8, 9, 1, 2, 3, 4],
+    [6, 7, 8, 9, 1, 2, 3, 4, 5],
+    [7, 8, 9, 1, 2, 3, 4, 5, 6],
+    [8, 9, 1, 2, 3, 4, 5, 6, 7],
+    [9, 1, 2, 3, 4, 5, 6, 7, 8]
 ]
 
 
@@ -44,7 +68,7 @@ grid_true = [
         [2, 3, 4, 5, 6, 7, 8, 9, 1],
         [3, 4, 5, 6, 7, 8, 9, 1, 2],
         [4, 5, 6, 7, 8, 9, 1, 2, 3],
-        [5, 6, 7, 8, 9, 1, 2, 3, 4],
+        [5, 6, 7, 8, 5, 1, 2, 3, 4],
         [6, 7, 8, 9, 1, 2, 3, 4, 5],
         [7, 8, 9, 1, 2, 3, 4, 5, 6],
         [8, 9, 1, 2, 3, 4, 5, 6, 7],
@@ -55,9 +79,11 @@ grid_true = [
 def test_lines(sample, expected):
     lines = sudoku.lines(sample)
 
-    for expected_line in expected:
-        line = next(lines)
+    for line, expected_line in zip(lines, expected):
         assert line == expected_line
+
+    with pytest.raises(StopIteration):
+        next(lines)
 
 
 @pytest.mark.parametrize('sample, expected', [
@@ -78,7 +104,7 @@ def test_lines(sample, expected):
         [2, 3, 4, 5, 6, 7, 8, 9, 1],
         [3, 4, 5, 6, 7, 8, 9, 1, 2],
         [4, 5, 6, 7, 8, 9, 1, 2, 3],
-        [5, 6, 7, 8, 9, 1, 2, 3, 4],
+        [5, 6, 7, 8, 5, 1, 2, 3, 4],
         [6, 7, 8, 9, 1, 2, 3, 4, 5],
         [7, 8, 9, 1, 2, 3, 4, 5, 6],
         [8, 9, 1, 2, 3, 4, 5, 6, 7],
@@ -88,10 +114,11 @@ def test_lines(sample, expected):
 ])
 def test_columns(sample, expected):
     columns = sudoku.columns(sample)
-
-    for expected_column in expected:
-        column = next(columns)
+    for column, expected_column in zip(columns, expected):
         assert column == expected_column
+
+    with pytest.raises(StopIteration):
+        next(columns)
 
 
 @pytest.mark.parametrize('sample, expected', [
@@ -112,7 +139,7 @@ def test_columns(sample, expected):
         [4, 5, 6, 5, 6, 7, 6, 7, 8],
         [7, 8, 9, 8, 9, 1, 9, 1, 2],
         [4, 5, 6, 5, 6, 7, 6, 7, 8],
-        [7, 8, 9, 8, 9, 1, 9, 1, 2],
+        [7, 8, 9, 8, 5, 1, 9, 1, 2],
         [1, 2, 3, 2, 3, 4, 3, 4, 5],
         [7, 8, 9, 8, 9, 1, 9, 1, 2],
         [1, 2, 3, 2, 3, 4, 3, 4, 5],
@@ -122,15 +149,18 @@ def test_columns(sample, expected):
 ])
 def test_blocks(sample, expected):
     blocks = sudoku.blocks(sample)
-
-    for expected_block in expected:
-        block = next(blocks)
+    for block, expected_block in zip(blocks, expected):
         assert block == expected_block
+
+    with pytest.raises(StopIteration):
+        next(blocks)
 
 
 @pytest.mark.parametrize('sample, expected', [
     (grid_true, True),
     (grid_false, False),
+    (grid_false1, False),
+    (grid_false2, False),
 ])
 def test_check_sudoku(sample, expected):
     assert expected == sudoku.check_sudoku(sample)
