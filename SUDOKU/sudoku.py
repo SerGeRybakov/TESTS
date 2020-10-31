@@ -30,30 +30,41 @@ def check_nums(line):
     return True
 
 
+def lines(sudoku):
+    """выделяем строки"""
+    for line in sudoku:
+        yield line
+
+
+def columns(sudoku):
+    """выделяем колонки"""
+    for i in range(len(sudoku)):
+        yield [line[i] for line in sudoku]
+
+
+def blocks(sudoku):
+    """выделяем квадраты (3х3 по всей сетке с соответствующим шагом)"""
+    squares = []
+    for i in range(len(sudoku))[::3]:
+        for j in range(0, 8, 3):
+            square = []
+            for line in sudoku[i:i + 3]:
+                square.extend(line[j:j + 3])
+            squares.append(square)
+
+    yield from squares
+
+
 def check_sudoku(grid):
-    # выделяем строки
-    for line in grid:
+    for line in lines(grid):
         if not check_nums(line):
             return False
 
-    # выделяем колонки
-    for i in range(len(grid)):
-        column = [line[i] for line in grid]
+    for column in columns(grid):
         if not check_nums(column):
             return False
 
-    # выделяем квадраты (3х3 по всей сетке с соответствующим шагом)
-    squares = []
-    for i in range(len(grid))[::3]:
-        x = 0
-        while x <= 6:
-            square = []
-            for line in grid[i:i + 3]:
-                square.extend(line[x:x + 3])
-            squares.append(square)
-            x += 3
-
-    for square in squares:
+    for square in blocks(grid):
         if not check_nums(square):
             return False
     return True
