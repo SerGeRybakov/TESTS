@@ -25,11 +25,10 @@ def insert_in_place(new_list, new_element):
         return new_list
 
 
-def _check_nums(new_lst, next_list):
+def sort_elements(new_lst, next_list):
     for new_element in next_list:
         if new_element > new_lst[-1]:
             return new_lst.extend(next_list[next_list.index(new_element)::])
-
         if new_element in new_lst:
             new_lst.insert(new_lst.index(new_element), new_element)
         else:
@@ -37,13 +36,15 @@ def _check_nums(new_lst, next_list):
     return new_lst
 
 
-def merge_lists(args, new_lst):
+def main(args):
+    min_element = get_min_element(args)
+    new_list, args = create_new_sorted_list(args, min_element)
     for lst in args:
-        _check_nums(new_lst, lst)
-    return new_lst
+        sort_elements(new_list, lst)
+    return new_list
 
 
-def main():
+if __name__ == '__main__':
     a = sorted([randint(x, 10) for x in range(10)])
     a1 = sorted([randint(x, 10) for x in range(10)])
     b = sorted([randint(x, 50) for x in range(50)])
@@ -55,11 +56,4 @@ def main():
 
     args = [a, a1, b, b1, c, c1, d, d1]
 
-    min_element = get_min_element(args)
-    new_list, args = create_new_sorted_list(args, min_element)
-
-    return merge_lists(args, new_list)
-
-
-if __name__ == '__main__':
-    print(main())
+    print(main(args))
