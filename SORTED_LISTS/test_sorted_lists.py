@@ -59,11 +59,35 @@ def test_create_new_sorted_list(args, min_element, min_list):
     assert min_list not in new_args
 
 
-# def test_insert_in_place():
-#     pass
+@pytest.mark.parametrize('new_list, new_element, expected_result', [
+    (["a", "a", "a", "c", "c", "c"], "b", ["a", "a", "a", "b", "c", "c", "c"]),
+    ([100, 200, 300, 500], 400, [100, 200, 300, 400, 500]),
+    ([1.001, 1.002, 1.003, 1.005], 1, [1, 1.001, 1.002, 1.003, 1.005]),
+])
+def test_insert_in_place(new_list, new_element, expected_result):
+    result = sorted_lists.insert_in_place(new_list, new_element)
+    assert result == expected_result
 
-# def test_sort_elements():
-#     pass
+
+@pytest.mark.parametrize('new_list, next_list, expected_result', [
+    (["a", "a", "a", "c", "c", "c"], ["d", "e", "f"], ["a", "a", "a", "c", "c", "c", "d", "e", "f"]),
+    ([100, 200, 300, 500], [501, 505, 507, 508], [100, 200, 300, 500, 501, 505, 507, 508]),
+    ([5.001, 6.002, 8.003, 15.005], [10, 11.002, 12.003], [5.001, 6.002, 8.003, 10, 11.002, 12.003, 15.005]),
+])
+def test_sort_elements1(new_list, next_list, expected_result):
+    result = sorted_lists.sort_elements(new_list, next_list)
+    assert result == expected_result
+
+
+@pytest.mark.parametrize('new_list, next_list, expected_result', [
+    (["a", "a", "a", "c", "c", "c"], ["a", "c"], ["a", "a", "a", "a", "c", "c", "c", "c"]),
+    ([100, 200, 300, 500], [100, 200], [100, 100, 200, 200, 300, 500]),
+    ([1.1, 1.2, 1.3, 1.5], [1.2, 1.5], [1.1, 1.2, 1.2, 1.3, 1.5, 1.5]),
+])
+def test_sort_elements2(new_list, next_list, expected_result):
+    result = sorted_lists.sort_elements(new_list, next_list)
+    assert result == expected_result
+
 
 if __name__ == '__main__':
     pytest.main()

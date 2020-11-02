@@ -28,7 +28,8 @@ def insert_in_place(new_list, new_element):
 def sort_elements(new_lst, next_list):
     for new_element in next_list:
         if new_element > new_lst[-1]:
-            return new_lst.extend(next_list[next_list.index(new_element)::])
+            new_lst.extend(next_list[next_list.index(new_element)::])
+            return new_lst
         if new_element in new_lst:
             new_lst.insert(new_lst.index(new_element), new_element)
         else:
