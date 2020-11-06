@@ -17,14 +17,14 @@ def args():
 
     a = sorted([randint(x, 100) for x in range(100)])
     a1 = sorted([randint(x, 100) for x in range(100)])
-    b = sorted([randint(x, 500) for x in range(500)])
-    b1 = sorted([randint(x, 500) for x in range(500)])
-    c = sorted([randint(x, 1000) for x in range(1000)])
-    c1 = sorted([randint(x, 1000) for x in range(1000)])
-    d = sorted([randint(x, 10000) for x in range(10000)])
-    d1 = sorted([randint(x, 10000) for x in range(10000)])
+    b = sorted([randint(400, 500) for _ in range(500)])
+    b1 = sorted([randint(400, 500) for _ in range(500)])
+    c = sorted([randint(800, 1000) for _ in range(1000)])
+    c1 = sorted([randint(800, 1000) for _ in range(1000)])
+    d = sorted([randint(5000, 10000) for _ in range(10000)])
+    d1 = sorted([randint(5000, 10000) for _ in range(10000)])
     e = [0, 0, 0, 0]
-    nums = [a, a1, b, b1, c, c1, d, d1, e]
+    nums = [d, d1, b, b1, a, a1, c, c1, e]
 
     return choice((strings, nums))
 
