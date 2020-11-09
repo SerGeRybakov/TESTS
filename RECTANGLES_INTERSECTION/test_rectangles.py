@@ -13,7 +13,6 @@ class TestMethods:
     def test__slots__(self, fixed_rect):
         with pytest.raises(AttributeError):
             fixed_rect.x3 = 0
-            assert AttributeError
 
     def test__rect_property_getter(self, fixed_rect):
         assert fixed_rect._rect == [[4, 5], [11, 15]]
@@ -23,12 +22,10 @@ class TestMethods:
     def test__rect_property_setter(self, fixed_rect):
         with pytest.raises(AttributeError):
             fixed_rect._rect = 0
-            assert AttributeError
 
     def test__rect_property_deleter(self, fixed_rect):
         with pytest.raises(AttributeError):
             del fixed_rect._rect
-            assert AttributeError
 
     @pytest.mark.parametrize('rect, expected', [
         (Rectangle(7, 8, 1, 1), [[1, 1], [7, 8]]),
@@ -88,15 +85,14 @@ class TestMethods:
 
 
 class TestValues:
-    @pytest.mark.parametrize('params, expected', [
-        ((5, 1, -5, -1), ValueError(f"Wrong section values passed")),
-        ((1, 5, -1, -5), ValueError(f"Wrong section values passed")),
-        ((5, 1, -5, -1), ValueError(f"Wrong section values passed")),
-
+    @pytest.mark.parametrize('params', [
+        (5, 1, -5, -1),
+        (1, 5, -1, -5),
+        (5, 1, -5, -1),
     ])
-    def test_xy_cross_value_error(self, params, expected):
-        with pytest.raises(ValueError):
-            assert Rectangle._xy_cross(*params) == expected
+    def test_xy_cross_value_error(self, params: tuple):
+        with pytest.raises(ValueError, match=r'Wrong section values passed'):
+            Rectangle._xy_cross(*params)
 
     @pytest.mark.parametrize('params, expected', [
         ((1, 1, 0, 0), None),
