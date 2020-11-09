@@ -3,25 +3,40 @@ import pytest
 from RECTANGLES_INTERSECTION.rectangles import Rectangle
 
 
+@pytest.fixture()
+def fixed_rect():
+    return Rectangle(11, 15, 4, 5)
+
+
 class TestMethods:
-    @pytest.mark.parametrize('rect, expected', [
-        (Rectangle(2, 3, 8, 7), AttributeError),
-        (Rectangle(1, 5, 13, 10), AttributeError),
-        (Rectangle(13, 10, 1, 5), AttributeError),
-    ])
-    def test__slots__(self, rect, expected):
+
+    def test__slots__(self, fixed_rect):
         with pytest.raises(AttributeError):
-            rect.x3 = 0
-            assert expected
+            fixed_rect.x3 = 0
+            assert AttributeError
+
+    def test__rect_property_getter(self, fixed_rect):
+        assert fixed_rect._rect == [[4, 5], [11, 15]]
+        fixed_rect.x1, fixed_rect.y1 = 0, 0
+        assert fixed_rect._rect == [[0, 0], [11, 15]]
+
+    def test__rect_property_setter(self, fixed_rect):
+        with pytest.raises(AttributeError):
+            fixed_rect._rect = 0
+            assert AttributeError
+
+    def test__rect_property_deleter(self, fixed_rect):
+        with pytest.raises(AttributeError):
+            del fixed_rect._rect
+            assert AttributeError
 
     @pytest.mark.parametrize('rect, expected', [
-        ((7, 8, 1, 1), [[1, 1], [7, 8]]),
-        ((11, 15, 4, 5), [[4, 5], [11, 15]]),
-        ((0, 0, -1, -1), [[-1, -1], [0, 0]])
+        (Rectangle(7, 8, 1, 1), [[1, 1], [7, 8]]),
+        (Rectangle(11, 15, 4, 5), [[4, 5], [11, 15]]),
+        (Rectangle(0, 0, -1, -1), [[-1, -1], [0, 0]])
     ])
     def test_reverse_init(self, rect, expected):
-        rect = Rectangle(*rect)
-        assert rect.rect == expected
+        assert rect._rect == expected
 
     @pytest.mark.parametrize('rect1, rect2', [
         (Rectangle(2, 3, 8, 7),
@@ -126,7 +141,7 @@ class TestValues:
     ])
     def test_result_correct_values(self, rect1, rect2, expected):
         message, new_rect = rect1 & rect2
-        assert new_rect.rect == expected
+        assert new_rect._rect == expected
 
     @pytest.mark.parametrize('rect1, rect2', [
         (Rectangle(2, 3, 8, 7), Rectangle(1, 5, 13, 10)),
