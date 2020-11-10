@@ -3,9 +3,6 @@ from typing import Dict, List
 
 
 class DB:
-    def __init__(self):
-        super().__init__()
-
     @staticmethod
     def _read_db() -> List[Dict]:
         with open('auth_db.json', 'r', encoding='utf-8') as f:

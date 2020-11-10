@@ -12,7 +12,7 @@ class NewUser(DB):
         self._username = self._generate_username()
         self._password = self._generate_password()
         self._pass_hash = generate_hash(self._password)
-        return self._create_user
+        self._create_user
 
     @property
     def _create_user(self):
@@ -30,7 +30,7 @@ class NewUser(DB):
         db.append(new_user)
         self._write_db(db)
         print(f"""Your login: {self._username}
-Your password: {self._password}. 
+Your password: {self._password} 
 If you wish you can change both username and password when you're logged in.""")
         return
 

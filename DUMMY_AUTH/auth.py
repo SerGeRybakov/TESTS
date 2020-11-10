@@ -3,27 +3,14 @@ from hashlib import sha256
 from DUMMY_AUTH.database import DB
 
 
-class DataUser:
-    def __set_name__(self, owner, name):
-        self._name = name
-
-    def __get__(self, instance, *args, **kwargs):
-        return instance.__dict__[self._name]
-
-    def __set__(self, instance, value):
-        instance.__dict__[self._name] = value
-
-    def __del__(self):
-        del self._name
-
-
 class Auth(DB):
-    username = DataUser()
-    password = DataUser()
-    _name = DataUser()
-    surname = DataUser()
-    _hash_pass = DataUser()
+    """
+To change your username print "username".
+To change your password print "password".
+To delete your account print "delete".
+To return to the main screen print "quit".
 
+    """
     def __init__(self, username, password):
         super().__init__()
         true_username = self._check_username(username)
@@ -34,16 +21,16 @@ class Auth(DB):
                 self.password = password
                 self._hash_pass = true_pass[0]
                 self.name = true_pass[1]
-                self.surname = true_pass[2]
-                self.id = true_pass[3]
-                print("Welcome to the dark side!")
+                self._surname = true_pass[2]
+                self._id = true_pass[3]
+                print(f"\nWelcome to the dark side!".upper())
             else:
                 raise ValueError("Wrong password")
         else:
             raise ValueError("Wrong username")
 
     def __str__(self):
-        return self.name + self.surname
+        return self.name + self._surname
 
     def __repr__(self):
         return f"{type(self).__name__}({self.username!r}, {self.password!r})"
@@ -64,13 +51,13 @@ class Auth(DB):
         db = self._read_db()
         user_info = [x for x in [user for user in db if user['username'] == self.username]][0]
         nicks = [user['username'] for user in db]
-        new_username = input('Input your new username: ')
+        new_username = input('Input your new username: ').strip().lower()
 
         while new_username in nicks:
             print(f'Username {new_username} is being used by another user.')
             new_username = input('Input another new username or "break" to keep the old one: ')
-            if new_username == "break":
-                return
+        if new_username == "break":
+            return
         self.username = new_username
         db[db.index(user_info)].update({"username": self.username})
         self._write_db(db)
@@ -79,10 +66,23 @@ class Auth(DB):
     def change_password(self):
         db = self._read_db()
         user_info = [x for x in [user for user in db if user['username'] == self.username]][0]
-        new_pass = input('Input your new password: ')
-        repeat = input('Input your new password once more: ')
+
+        new_pass = input('Input your new password (at least 8 symbols) or "break" to keep the old one: ')
+        if new_pass != "break":
+            while len(new_pass) != 8 or new_pass == "break":
+                print("New password must contain at least 8 symbols")
+                new_pass = input('Input your new password (at least 8 symbols) or "break" to keep the old one: ')
+                if new_pass == "break":
+                    return
+        else:
+            return
+
+        repeat = input('Input your new password once more or "break" to keep the old one: ')
+        if repeat == "break":
+            return
+
         if new_pass != repeat:
-            raise ValueError("New passwords didn't match each other")
+            raise ValueError("New passwords don't match each other. No change was made.")
 
         self.password = new_pass
 
@@ -95,26 +95,22 @@ class Auth(DB):
 
     def delete_account(self):
         yes = "yes"
-        decision = input('Are you sure you want to delete the account? Print "YES" if so.').lower()
+        decision = input('Are you sure you want to delete the account? Input "YES" if so. ').strip().lower()
         if decision == yes:
             last_check = self._check_pass(input('Please, input your password: '))
             if last_check:
                 db = self._read_db()
                 user_info = [x for x in [user for user in db if user['username'] == self.username]][0]
                 db.pop(db.index(user_info))
-                del self.username
-                del self.password
-                del self._hash_pass
-                del self.name
-                del self.surname
-                del self.id
+                self._write_db(db)
+                del self
                 exit()
+            else:
+                raise ValueError("Wrong password. Delete operation was canceled. Try again.")
+        else:
+            print("Delete operation was canceled by user.")
+        return
 
 
 if __name__ == '__main__':
-    username, password = "v_pupkin", "12345"
-    user = Auth(username, password)
-    print(user.id)
-    user.id = 2
-    print(user.id)
-    user.change_username()
+    pass

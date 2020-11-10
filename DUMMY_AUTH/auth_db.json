@@ -5,7 +5,8 @@
     "name": "Vasya",
     "surname": "Pupkin",
     "password": "12345",
-    "pass_hash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5"
+    "pass_hash": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5",
+    "hash_pass": "5994471abb01112afcc18159f6cc74b4f511b99806da59b3caf5a9c173cacfc5"
   },
   {
     "id": 2,
