@@ -1,6 +1,6 @@
 from hashlib import sha256
 
-from DUMMY_AUTH.database import DB
+from DUMMY_AUTH.code.database import DB
 
 
 class Auth(DB):
@@ -86,7 +86,7 @@ To return to the main screen print "quit".
 
         self.password = new_pass
 
-        from DUMMY_AUTH.registration import generate_hash
+        from DUMMY_AUTH.code.registration import generate_hash
         self._hash_pass = generate_hash(self.password)
 
         db[db.index(user_info)].update({"password": self.password, "hash_pass": self._hash_pass})

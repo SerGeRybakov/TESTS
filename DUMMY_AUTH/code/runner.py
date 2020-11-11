@@ -1,5 +1,5 @@
-from DUMMY_AUTH.auth import Auth
-from DUMMY_AUTH.registration import NewUser
+from DUMMY_AUTH.code.auth import Auth
+from DUMMY_AUTH.code.registration import NewUser
 
 
 def register():
