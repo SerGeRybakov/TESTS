@@ -1,11 +1,11 @@
 import random
 import re
-from string import printable, whitespace
 from hashlib import sha256
+from string import printable, whitespace
 
-from DUMMY_AUTH.code.database import DB
+from DUMMY_AUTH.auth.database import DB
 
-db = DB._read_db()
+db = DB.read_db()
 
 
 class NewUser:
@@ -15,9 +15,8 @@ class NewUser:
         self._username = self._generate_username(self._name, self._surname)
         self._password = self._generate_password()
         self._pass_hash = generate_hash(self._password)
-        self._create_user
+        self._create_user()
 
-    @property
     def _create_user(self):
         id_num = max(user['id'] for user in db) + 1
         new_user = {
@@ -30,12 +29,12 @@ class NewUser:
         }
 
         db.append(new_user)
-        DB._write_db(db)
+        DB.write_db(db)
         print(f"""
-Your login: {self._username}
+Your username: {self._username}
 Your password: {self._password}
-If you wish you can change both username and password when you're logged in.""")
-        return
+You can change both username and password when you're logged in.""")
+
 
     @staticmethod
     def _generate_username(name, surname):

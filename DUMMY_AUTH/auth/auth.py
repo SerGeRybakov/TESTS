@@ -1,6 +1,6 @@
 from hashlib import sha256
 
-from DUMMY_AUTH.code.database import DB
+from DUMMY_AUTH.auth.database import DB
 
 
 class Auth(DB):
@@ -36,11 +36,11 @@ To return to the main screen print "quit".
         return f"{type(self).__name__}({self.username!r}, {self.password!r})"
 
     def _check_username(self, username):
-        users = [user['username'] for user in self._read_db()]
+        users = [user['username'] for user in self.read_db()]
         return True if username in users else False
 
     def _check_pass(self, password):
-        user_info = [x for x in [user for user in self._read_db() if user['username'] == self.username]][0]
+        user_info = [x for x in [user for user in self.read_db() if user['username'] == self.username]][0]
 
         hash = sha256(password.encode()).hexdigest()
         if user_info['pass_hash'] == hash:
@@ -48,7 +48,7 @@ To return to the main screen print "quit".
         return False
 
     def change_username(self):
-        db = self._read_db()
+        db = self.read_db()
         user_info = [x for x in [user for user in db if user['username'] == self.username]][0]
         nicks = [user['username'] for user in db]
         new_username = input('Input your new username: ').strip().lower()
@@ -60,11 +60,11 @@ To return to the main screen print "quit".
             return
         self.username = new_username
         db[db.index(user_info)].update({"username": self.username})
-        self._write_db(db)
+        self.write_db(db)
         return
 
     def change_password(self):
-        db = self._read_db()
+        db = self.read_db()
         user_info = [x for x in [user for user in db if user['username'] == self.username]][0]
 
         new_pass = input('Input your new password (at least 8 symbols) or "break" to keep the old one: ')
@@ -86,11 +86,11 @@ To return to the main screen print "quit".
 
         self.password = new_pass
 
-        from DUMMY_AUTH.code.registration import generate_hash
+        from DUMMY_AUTH.auth.registration import generate_hash
         self._hash_pass = generate_hash(self.password)
 
         db[db.index(user_info)].update({"password": self.password, "hash_pass": self._hash_pass})
-        self._write_db(db)
+        self.write_db(db)
         return
 
     def delete_account(self):
@@ -99,10 +99,10 @@ To return to the main screen print "quit".
         if decision == yes:
             last_check = self._check_pass(input('Please, input your password: '))
             if last_check:
-                db = self._read_db()
+                db = self.read_db()
                 user_info = [x for x in [user for user in db if user['username'] == self.username]][0]
                 db.pop(db.index(user_info))
-                self._write_db(db)
+                self.write_db(db)
                 del self
                 exit()
             else:

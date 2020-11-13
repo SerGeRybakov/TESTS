@@ -3,18 +3,18 @@ import string
 
 import pytest
 
-from DUMMY_AUTH.code.database import DB
-from DUMMY_AUTH.code.registration import NewUser, generate_hash
+from DUMMY_AUTH.auth.database import DB
+from DUMMY_AUTH.auth.registration import NewUser, generate_hash
 
 
 @pytest.fixture()
 def new_user():
     yield NewUser("~~new~~", "user")
-    db = DB._read_db()
+    db = DB.read_db()
     users = [user for user in db if "~~new~~" == user['name']]
     for user in users:
         db.remove(user)
-    DB._write_db(db)
+    DB.write_db(db)
 
 
 @pytest.mark.parametrize("name, surname, expected", [
@@ -62,17 +62,17 @@ def test_generate_hash(password, hash):
 
 
 def test_create_user(new_user):
-    assert new_user._username == DB._read_db()[-1]['username']
+    assert new_user._username == DB.read_db()[-1]['username']
 
 
-def test_create_user_output(capfd, new_user):
-    out, err = capfd.readouterr()
+def test_create_user_output(capsys, new_user):
+    out, err = capsys.readouterr()
     message = f"""
-Your login: {new_user._username}
+Your username: {new_user._username}
 Your password: {new_user._password}
-If you wish you can change both username and password when you're logged in."""
+You can change both username and password when you're logged in."""
 
-    assert out == message
+    assert out.rstrip() == message
 
 
 if __name__ == '__main__':
