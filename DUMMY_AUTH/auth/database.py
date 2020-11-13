@@ -2,10 +2,10 @@ import json
 import os
 from typing import Dict, List, Any
 
-path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'auth_db.json'))
-
 
 class DB:
+    path = os.path.abspath(os.path.join(os.path.dirname(__file__), 'auth_db.json'))
+
     @staticmethod
     def read_db(file=path) -> List[Dict[str, Any]]:
         with open(file, 'r', encoding='utf-8') as f:

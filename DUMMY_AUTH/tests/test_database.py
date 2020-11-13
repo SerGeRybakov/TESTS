@@ -1,3 +1,6 @@
+import tempfile
+from unittest.mock import patch
+
 import pytest
 
 from DUMMY_AUTH.auth.database import DB
@@ -11,19 +14,15 @@ def test__read_db():
 
 
 def test__write_db():
-    database = DB.read_db()
+    database = []
     new_user = {"new_dict": "new_dict"}
     database.append(new_user)
 
-    try:
-        DB.write_db(database)
-        db = DB.read_db()
+    with tempfile.NamedTemporaryFile() as file:
+        file.close()
+        DB.write_db(database, file=file.name)
+        db = DB.read_db(file.name)
         assert new_user == db[-1]
-
-    finally:
-        db.pop(-1)
-        DB.write_db(db)
-        assert new_user not in DB.read_db()
 
 
 if __name__ == '__main__':
