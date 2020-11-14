@@ -1,5 +1,6 @@
 import tempfile
 from shutil import copy2
+from unittest.mock import patch
 
 import pytest
 
@@ -17,7 +18,7 @@ def mock_database():
 
 @pytest.fixture()
 def existing_user(mock_database):
-    return Auth('v_pupkin', '12345', mock_database)
+    return Auth('v_pupkin', '12345', path=mock_database)
 
 
 @pytest.fixture()
@@ -37,6 +38,7 @@ def test_init_output(capsys, existing_user):
     'V_pupkin',
 ])
 def test_init_wrong_username(login):
+    assert isinstance(login, str)
     with pytest.raises(ValueError, match="Wrong username"):
         Auth(login, '12345')
 
@@ -51,6 +53,7 @@ def test_init_wrong_username(login):
     '-12345'
 ])
 def test_init_wrong_password(password):
+    assert isinstance(password, str)
     with pytest.raises(ValueError, match="Wrong password"):
         Auth('v_pupkin', password)
 
@@ -77,6 +80,29 @@ def test__check_username(existing_user, login, expected):
 ])
 def test__check_password(existing_user, password, expected):
     assert existing_user._check_pass(password) == expected
+
+
+@pytest.mark.parametrize('username', ['v_gupkin', "123456"])
+def test_change_username(existing_user, mock_database, username):
+    with patch('builtins.input', return_value=username):
+        existing_user.change_username()
+    assert Auth(username, "12345", mock_database)
+
+
+def test_break_change_username(existing_user, mock_database):
+    with patch('builtins.input', return_value='break'):
+        assert not existing_user.change_username()
+    with pytest.raises(ValueError):
+        Auth("break", "12345", mock_database)
+
+
+@pytest.mark.xfail
+def test_change_username1(existing_user, capsys):
+    with patch('builtins.input', side_effect=('i_isanov1', 'break')) as mock_input:
+        out, err = capsys.readouterr()
+        existing_user.change_username()
+        mock_input.assert_called()
+        assert out == f'Username i_isanov1 is being used by another user.'
 
 
 if __name__ == '__main__':

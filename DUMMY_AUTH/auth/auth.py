@@ -52,14 +52,14 @@ To return to the main screen print "quit".
         nicks = [user['username'] for user in db]
         new_username = input('Input your new username: ').strip().lower()
 
-        while new_username in nicks:
+        while new_username in nicks or not new_username:
             print(f'Username {new_username} is being used by another user.')
             new_username = input('Input another new username or "break" to keep the old one: ')
         if new_username == "break":
             return
         self.username = new_username
         db[db.index(user_info)].update({"username": self.username})
-        self.write_db(db)
+        self.write_db(db, file=self.db_path)
         return
 
     def change_password(self):
@@ -68,7 +68,7 @@ To return to the main screen print "quit".
 
         new_pass = input('Input your new password (at least 8 symbols) or "break" to keep the old one: ')
         if new_pass != "break":
-            while len(new_pass) != 8 or new_pass == "break":
+            while len(new_pass) < 8 or new_pass == "break":
                 print("New password must contain at least 8 symbols")
                 new_pass = input('Input your new password (at least 8 symbols) or "break" to keep the old one: ')
                 if new_pass == "break":
@@ -89,7 +89,7 @@ To return to the main screen print "quit".
         self._hash_pass = generate_hash(self.password)
 
         db[db.index(user_info)].update({"password": self.password, "hash_pass": self._hash_pass})
-        self.write_db(db)
+        self.write_db(db, self.db_path)
         return
 
     def delete_account(self):
@@ -101,7 +101,7 @@ To return to the main screen print "quit".
                 db = self.read_db(self.db_path)
                 user_info = [x for x in [user for user in db if user['username'] == self.username]][0]
                 db.pop(db.index(user_info))
-                self.write_db(db)
+                self.write_db(db, self.db_path)
                 del self
                 exit()
             else:
