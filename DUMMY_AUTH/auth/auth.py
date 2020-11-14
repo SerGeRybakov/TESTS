@@ -60,7 +60,7 @@ To return to the main screen print "quit".
         self.username = new_username
         db[db.index(user_info)].update({"username": self.username})
         self.write_db(db, file=self.db_path)
-        return
+        return True
 
     def change_password(self):
         db = self.read_db(self.db_path)
@@ -88,9 +88,9 @@ To return to the main screen print "quit".
         from DUMMY_AUTH.auth.registration import generate_hash
         self._hash_pass = generate_hash(self.password)
 
-        db[db.index(user_info)].update({"password": self.password, "hash_pass": self._hash_pass})
+        db[db.index(user_info)].update({"password": self.password, "pass_hash": self._hash_pass})
         self.write_db(db, self.db_path)
-        return
+        return True
 
     def delete_account(self):
         yes = "yes"
