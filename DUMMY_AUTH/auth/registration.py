@@ -5,11 +5,11 @@ from string import printable, whitespace
 
 from DUMMY_AUTH.auth.database import DB
 
-db = DB.read_db()
-
 
 class NewUser:
-    def __init__(self, name: str, surname: str):
+    def __init__(self, name: str, surname: str, path=DB.path):
+        self.__path = path
+        self.__db = DB.read_db(self.__path)
         self._name = name
         self._surname = surname
         self._username = self._generate_username(self._name, self._surname)
@@ -18,7 +18,7 @@ class NewUser:
         self._create_user()
 
     def _create_user(self):
-        id_num = max(user['id'] for user in db) + 1
+        id_num = max(user['id'] for user in self.__db) + 1
         new_user = {
             "id": id_num,
             "username": self._username,
@@ -28,18 +28,16 @@ class NewUser:
             "pass_hash": self._pass_hash
         }
 
-        db.append(new_user)
-        DB.write_db(db)
+        self.__db.append(new_user)
+        DB.write_db(self.__db, file=self.__path)
         print(f"""
 Your username: {self._username}
 Your password: {self._password}
 You can change both username and password when you're logged in.""")
 
-
-    @staticmethod
-    def _generate_username(name, surname):
+    def _generate_username(self, name, surname):
         username = name.lower()[0] + "_" + surname.lower()
-        similar = [user['username'] for user in db if username in user['username']]
+        similar = [user['username'] for user in self.__db if username in user['username']]
         if similar:
             num = [re.findall(r'\d+$', name)[0] for name in similar if re.search(r'\d+$', name)]
             if num:
