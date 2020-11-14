@@ -59,7 +59,6 @@ class TestChecks(Fixtures):
         assert existing_user._check_pass(password) == expected
 
 
-# FIXME последний тест в классе не проходит: в цикле не захватывается вывод
 class TestUsername(Fixtures):
 
     @pytest.mark.parametrize('username', ['v_gupkin', "123456"])
@@ -74,17 +73,18 @@ class TestUsername(Fixtures):
         with pytest.raises(ValueError, match='Wrong username'):
             Auth("break", "12345", mock_database)
 
-    # FIXME тест не проходит: в цикле не захватывается вывод
-    @pytest.mark.xfail
-    def test_reserved_name_change_username(self, existing_user, capsys):
-        with patch('builtins.input', side_effect=('i_isanov1', 'break')) as mock_input:
+    @pytest.mark.parametrize('login', [
+        ('i_isanov1', 'break'),
+        ('i_ivanov10', 'i_isanov10')
+    ])
+    def test_reserved_name_change_username(self, existing_user, capsys, login):
+        with patch('builtins.input', side_effect=login) as mock_input:
             existing_user.change_username()
             out, err = capsys.readouterr()
             mock_input.assert_called()
-            assert out == f'Username i_isanov1 is being used by another user.'
+            assert out.rstrip() == f'Username {login[0]} is being used by another user.'
 
 
-# FIXME последний тест в классе не проходит: в цикле не захватывается вывод
 class TestPassword(Fixtures):
     @pytest.mark.parametrize('password', [
         ('01234567', "01234567"),
@@ -116,20 +116,15 @@ class TestPassword(Fixtures):
             with patch('builtins.input', side_effect=password):
                 existing_user.change_password()
 
-    # FIXME тест не проходит: в цикле не захватывается вывод
-    @pytest.mark.xfail
     @pytest.mark.parametrize('password', [
-        ('3245', '012345678', 'break')
-        # ('aAbBdD', "aAbBcCDD")
+        ('3245', '012345678', 'break'),
+        ('aAbBdD', "aAbBcCDD", "aAbBcCDD")
     ])
     def test_incorrect_len_change_password(self, existing_user, mock_database, password, capsys):
-        # out, _ = capsys.readouterr()
-        with patch('builtins.print') as out:
-            with patch('builtins.input', side_effect=password):
-                # assert out == "WELCOME TO THE DARK SIDE"
-                existing_user.change_password()
-                # assert out == "WELCOME TO THE DARK SIDE"
-                assert out == "New password must contain at least 8 symbols"
+        with patch('builtins.input', side_effect=password):
+            existing_user.change_password()
+            out, err = capsys.readouterr()
+            assert out.rstrip() == "New password must contain at least 8 symbols"
 
 
 class TestDelete(Fixtures):
