@@ -3,6 +3,7 @@ from unittest.mock import patch
 import pytest
 
 from DUMMY_AUTH.auth.auth import Auth
+from DUMMY_AUTH.auth.exceptions import LogOutException
 from DUMMY_AUTH.tests.fixtures import Fixtures
 
 
@@ -138,7 +139,7 @@ class TestDelete(Fixtures):
         ('yeS', '12345'),
     ])
     def test_delete_account(self, existing_user, answer):
-        with pytest.raises(SystemExit):
+        with pytest.raises(LogOutException):
             with patch('builtins.input', side_effect=answer):
                 existing_user.delete_account()
 
@@ -151,20 +152,22 @@ class TestDelete(Fixtures):
         ('yES', 'abcdef'),
         ('yeS', 'IKJHDfksdfgoijhkndsv;iklhfdg'),
     ])
-    def test_wrong_password_delete_account(self, existing_user, read_mock_db, answer):
-        with pytest.raises(ValueError, match="Wrong password. Delete operation was canceled. Try again."):
-            with patch('builtins.input', side_effect=answer):
-                existing_user.delete_account()
-        assert read_mock_db[0]['username'] == existing_user.username
+    def test_wrong_password_delete_account(self, existing_user, read_mock_db, answer, capsys):
+        with patch('builtins.input', side_effect=answer):
+            existing_user.delete_account()
+            out, err = capsys.readouterr()
+            assert out.rstrip() == "Wrong password. Delete operation was canceled. Try again."
+            assert read_mock_db[0]['username'] == existing_user.username
 
     @pytest.mark.parametrize('answer', [
         '', ' ', 'no', '1', '0', '[]', '{}'
     ])
-    def test_cancel_delete_account(self, existing_user, answer, capsys):
+    def test_cancel_delete_account(self, read_mock_db, existing_user, answer, capsys):
         with patch('builtins.input', return_value=answer):
             existing_user.delete_account()
             out, err = capsys.readouterr()
             assert out.rstrip() == "Delete operation was canceled by user."
+            assert read_mock_db[0]['username'] == existing_user.username
 
 
 if __name__ == '__main__':
