@@ -1,5 +1,6 @@
 from DUMMY_AUTH.auth.auth import Auth
 from DUMMY_AUTH.auth.registration import NewUser
+from DUMMY_AUTH.auth.exceptions import LogOutException
 
 
 def register():
@@ -14,32 +15,29 @@ def log_in():
     password = input("Input your password: ")
     # username, password = "v_pupkin", "123456"
     user = Auth(username, password)
-    if user:
-        commands = {
-            "username": user.change_username,
-            "password": user.change_password,
-            "delete": user.delete_account,
-            "quit": None
-        }
-        print(user.__doc__)
+
+    commands = {
+        "username": user.change_username,
+        "password": user.change_password,
+        "delete": user.delete_account,
+        "quit": user.log_out,
+    }
+    print(user.__doc__)
+    while True:
         com = input('Input your choice here: ')
         print()
-        while com != 'quit':
-            while com not in commands:
-                print("Wrong command!")
-                print(user.__doc__)
-                com = input('Input your choice here: ')
-                print()
-            if com != "quit":
-                try:
-                    commands[com]()
-                except ValueError as e:
-                    print(str(e))
-                    print()
-                finally:
-                    com = ""
-            else:
-                return
+        if com not in commands:
+            print("Wrong command!")
+            print(user.__doc__)
+            continue
+
+        try:
+            commands[com]()
+        except ValueError as e:
+            print(str(e))
+            print()
+        except LogOutException:
+            return
 
 
 def main():
@@ -50,25 +48,27 @@ For exit input 3
     main_commands = {
         "1": register,
         "2": log_in,
-        "3": exit
+        "3": None
     }
 
-    print(main.__doc__)
-    com = input('Input your choice here: ')
-    print()
-    while com not in main_commands:
-        print("Wrong command!")
+    while True:
         print(main.__doc__)
         com = input('Input your choice here: ')
         print()
-    try:
-        main_commands[com]()
-    except ValueError as e:
-        print(str(e))
-        print()
-    return
+        if com not in main_commands:
+            print("Wrong command!")
+            continue
+
+        if com == "3":
+            print("Bye!")
+            return
+
+        try:
+            main_commands[com]()
+        except ValueError as e:
+            print(str(e))
+            print()
 
 
 if __name__ == '__main__':
-    while True:
-        main()
+    main()

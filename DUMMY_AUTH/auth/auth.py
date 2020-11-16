@@ -1,6 +1,8 @@
 from hashlib import sha256
+from typing import NoReturn
 
 from DUMMY_AUTH.auth.database import DB
+from DUMMY_AUTH.auth.exceptions import LogOutException
 
 
 class Auth(DB):
@@ -92,23 +94,26 @@ To return to the main screen print "quit".
         self.write_db(db, self.db_path)
         return True
 
-    def delete_account(self):
+    def delete_account(self) -> None:
         yes = "yes"
         decision = input('Are you sure you want to delete the account? Input "YES" if so. ').strip().lower()
-        if decision == yes:
-            last_check = self._check_pass(input('Please, input your password: '))
-            if last_check:
-                db = self.read_db(self.db_path)
-                user_info = [x for x in [user for user in db if user['username'] == self.username]][0]
-                db.pop(db.index(user_info))
-                self.write_db(db, self.db_path)
-                del self
-                exit()
-            else:
-                raise ValueError("Wrong password. Delete operation was canceled. Try again.")
-        else:
+        if decision != yes:
             print("Delete operation was canceled by user.")
-        return
+            return
+
+        last_check = self._check_pass(input('Please, input your password: '))
+        if not last_check:
+            print("Wrong password. Delete operation was canceled. Try again.")
+            return
+
+        db = self.read_db(self.db_path)
+        user_info = [x for x in [user for user in db if user['username'] == self.username]][0]
+        db.pop(db.index(user_info))
+        self.write_db(db, self.db_path)
+        raise LogOutException()
+
+    def log_out(self) -> NoReturn:
+        raise LogOutException()
 
 
 if __name__ == '__main__':
