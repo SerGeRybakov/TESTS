@@ -12,7 +12,7 @@ To change your password print "password".
 To delete your account print "delete".
 To return to the main screen print "quit".
 
-    """
+"""
     def __init__(self, username, password, path=DB.path):
         super().__init__()
         self.db_path = path
@@ -58,10 +58,12 @@ To return to the main screen print "quit".
             print(f'Username {new_username} is being used by another user.')
             new_username = input('Input another new username or "break" to keep the old one: ')
         if new_username == "break":
+            print(f'Your username was not changed')
             return
         self.username = new_username
         db[db.index(user_info)].update({"username": self.username})
         self.write_db(db, file=self.db_path)
+        print(f'Your username was changed to {self.username}')
         return True
 
     def change_password(self):
@@ -76,10 +78,12 @@ To return to the main screen print "quit".
                 if new_pass == "break":
                     return
         else:
+            print(f'Your password was not changed')
             return
 
         repeat = input('Input your new password once more or "break" to keep the old one: ')
         if repeat == "break":
+            print(f'Your password was not changed')
             return
 
         if new_pass != repeat:
