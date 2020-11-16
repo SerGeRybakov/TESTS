@@ -7,9 +7,9 @@ from DUMMY_AUTH.auth.registration import NewUser
 from DUMMY_AUTH.tests.test_auth import Fixtures
 
 
-# не запускать - меняет боевую базу
-@pytest.mark.skip
 class TestFunctions(Fixtures):
+
+    # тест бестолковый, т.к. не тестирует ничего, кроме подменённого объекта
     @pytest.mark.skip
     @pytest.mark.parametrize('new_name', [
         ('John', 'Smith'),
@@ -17,8 +17,9 @@ class TestFunctions(Fixtures):
         ('John', 'Smith'),
     ])
     def test_register(self, mock_database, new_name):
-        with patch('builtins.input', side_effect=new_name):
-            assert isinstance(NewUser, runner.register())
+        with patch('DUMMY_AUTH.auth.runner.register',
+                   return_value=NewUser(*new_name, mock_database)) as reg:
+            assert isinstance(reg(), NewUser)
 
 
 if __name__ == '__main__':
