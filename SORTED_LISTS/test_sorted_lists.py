@@ -13,7 +13,7 @@ def args():
     string4 = sorted([x for x in 'абвгдежзиклмнопрстуфхцчшщъыьэюя'.upper() for _ in range(100)])
     string5 = ['a']
 
-    strings = [string1, string2, string3, string4, string5]
+    strings = [string4, string2, string1, string3, string5]
 
     a = sorted([randint(x, 100) for x in range(100)])
     a1 = sorted([randint(x, 100) for x in range(100)])
@@ -24,7 +24,7 @@ def args():
     d = sorted([randint(5000, 10000) for _ in range(10000)])
     d1 = sorted([randint(5000, 10000) for _ in range(10000)])
     e = [0, 0, 0, 0]
-    nums = [d, d1, b, b1, a, a1, c, c1, e]
+    nums = [d, b1, a, c1, e, a1, b, d1, c]
 
     return choice((strings, nums))
 

@@ -19,10 +19,9 @@ def create_new_sorted_list(args, min_element):
 
 def insert_in_place(new_list, new_element):
     for element in new_list:
-        if element < new_element:
-            continue
-        new_list.insert(new_list.index(element), new_element)
-        return new_list
+        if element >= new_element:
+            new_list.insert(new_list.index(element), new_element)
+            return new_list
 
 
 def sort_elements(new_lst, next_list):
@@ -37,10 +36,10 @@ def sort_elements(new_lst, next_list):
     return new_lst
 
 
-def main(args):
-    min_element = get_min_element(args)
-    new_list, args = create_new_sorted_list(args, min_element)
-    for lst in args:
+def main(lst):
+    min_element = get_min_element(lst)
+    new_list, lst = create_new_sorted_list(lst, min_element)
+    for lst in lst:
         sort_elements(new_list, lst)
     return new_list
 
