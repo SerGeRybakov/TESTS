@@ -36,10 +36,10 @@ def sort_elements(new_lst, next_list):
     return new_lst
 
 
-def main(lst):
-    min_element = get_min_element(lst)
-    new_list, lst = create_new_sorted_list(lst, min_element)
-    for lst in lst:
+def main(test_list):
+    min_element = get_min_element(test_list)
+    new_list, args_lst = create_new_sorted_list(test_list, min_element)
+    for lst in args_lst:
         sort_elements(new_list, lst)
     return new_list
 
