@@ -83,7 +83,7 @@ class TestUsername(Fixtures):
             existing_user.change_username()
             out, err = capsys.readouterr()
             mock_input.assert_called()
-            assert out.rstrip() == f'Username {login[0]} is being used by another user.'
+            assert f'Username {login[0]} is being used by another user.' in out.rstrip()
 
 
 class TestPassword(Fixtures):
@@ -125,7 +125,7 @@ class TestPassword(Fixtures):
         with patch('builtins.input', side_effect=password):
             existing_user.change_password()
             out, err = capsys.readouterr()
-            assert out.rstrip() == "New password must contain at least 8 symbols"
+            assert "New password must contain at least 8 symbols" in out.rstrip()
 
 
 class TestDelete(Fixtures):
